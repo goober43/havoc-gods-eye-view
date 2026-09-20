@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: havoc-gods-eye-view
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm run preview
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: HOST
+        value: "0.0.0.0"
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "true"
+      - key: HAVOC_SUPABASE_URL
+        sync: false
+      - key: HAVOC_SUPABASE_KEY
+        sync: false
+      - key: CESIUM_ION_TOKEN
+        sync: false

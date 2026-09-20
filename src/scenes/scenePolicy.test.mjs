@@ -45,7 +45,9 @@ const REGISTERED = new Set([
   'flights', 'military', 'earthquakes', 'satellites', 'rocket-launches', 'traffic',
   'cctv', 'radio', 'bikeshare', 'ais-live-vessels', 'military-installations',
   'military-awareness', 'local-datacenters', 'local-dams',
-  'telegeography-submarine-cables', 'local-firms',
+  'havoc-lane-events', 'havoc-intel', 'havoc-event-clusters',
+  'havoc-vessel-history', 'havoc-aircraft-history', 'havoc-io-campaigns',
+  'havoc-whale-movements', 'havoc-polymarket-signals', 'local-firms',
 ]);
 
 test('a shot only reconciles the layers it declares', () => {

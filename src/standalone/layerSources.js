@@ -1,8 +1,8 @@
 import {
-  createOpenSkySource,
   createAdsbLolSource,
   createAisStreamSource,
 } from '../sources/live/standalone.js';
+import { createHavocAircraftSource } from '../havoc/aircraftSource.js';
 import { createCctvSource } from '../layers/cctv/source.js';
 import { createRadioSource } from '../layers/radio/source.js';
 import { createTransitSource } from '../layers/transit/source.js';
@@ -20,7 +20,7 @@ export { createReferenceSources as createStandaloneReferenceSources } from '../s
 export function createStandaloneLayerSources() {
   return {
     ...createReferenceSources(),
-    flights: createOpenSkySource(),
+    flights: createHavocAircraftSource(),
     military: createAdsbLolSource(),
     vessels: createAisStreamSource({
       apiUrl: import.meta.env?.VITE_AIS_LIVE_API_URL || '/api/ais-live',

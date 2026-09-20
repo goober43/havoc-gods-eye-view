@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "a12345",
+      "geometry": { "type": "Point", "coordinates": [-97.6, 30.3] },
+      "properties": {
+        "id": "a12345",
+        "icao24": "a12345",
+        "callsign": "DAL123",
+        "altitude_m": 10668,
+        "speed_mps": 250,
+        "course_deg": 95,
+        "on_ground": false,
+        "title": "DAL123",
+        "details": "Austin FIR demo track"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "3c65a0",
+      "geometry": { "type": "Point", "coordinates": [8.57, 50.05] },
+      "properties": {
+        "id": "3c65a0",
+        "icao24": "3c65a0",
+        "callsign": "DLH400",
+        "altitude_m": 11277,
+        "speed_mps": 240,
+        "course_deg": 280,
+        "on_ground": false,
+        "title": "DLH400",
+        "details": "Frankfurt FIR demo track"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "c820b4",
+      "geometry": { "type": "Point", "coordinates": [139.78, 35.55] },
+      "properties": {
+        "id": "c820b4",
+        "icao24": "c820b4",
+        "callsign": "ANA001",
+        "altitude_m": 9144,
+        "speed_mps": 220,
+        "course_deg": 45,
+        "on_ground": false,
+        "title": "ANA001",
+        "details": "Tokyo FIR demo track"
+      }
+    }
+  ]
+}

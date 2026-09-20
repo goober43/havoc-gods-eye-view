@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "intel-dc",
+      "geometry": { "type": "Point", "coordinates": [-77.0369, 38.9072] },
+      "properties": {
+        "id": "intel-dc",
+        "title": "HAVOC intel node — DC",
+        "details": "Sample report pin (stub)"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "intel-london",
+      "geometry": { "type": "Point", "coordinates": [-0.1276, 51.5074] },
+      "properties": {
+        "id": "intel-london",
+        "title": "HAVOC intel node — London",
+        "details": "Sample report pin (stub)"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "intel-singapore",
+      "geometry": { "type": "Point", "coordinates": [103.8198, 1.3521] },
+      "properties": {
+        "id": "intel-singapore",
+        "title": "HAVOC intel node — Singapore",
+        "details": "Sample report pin (stub)"
+      }
+    }
+  ]
+}

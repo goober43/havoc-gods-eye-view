@@ -337,6 +337,46 @@ export const LAYER_STATE_REGISTRY = Object.freeze([
     disposition: 'enabled+options',
     optionOwner: 'flights',
   }),
+  Object.freeze({
+    id: 'havoc-aircraft-history',
+    token: 'y',
+    disposition: 'enabled-only',
+  }),
+  Object.freeze({
+    id: 'havoc-event-clusters',
+    token: 'o',
+    disposition: 'enabled-only',
+  }),
+  Object.freeze({
+    id: 'havoc-intel',
+    token: 'l',
+    disposition: 'enabled-only',
+  }),
+  Object.freeze({
+    id: 'havoc-io-campaigns',
+    token: 'u',
+    disposition: 'enabled-only',
+  }),
+  Object.freeze({
+    id: 'havoc-lane-events',
+    token: 'k',
+    disposition: 'enabled-only',
+  }),
+  Object.freeze({
+    id: 'havoc-polymarket-signals',
+    token: '1',
+    disposition: 'enabled-only',
+  }),
+  Object.freeze({
+    id: 'havoc-vessel-history',
+    token: 'v',
+    disposition: 'enabled-only',
+  }),
+  Object.freeze({
+    id: 'havoc-whale-movements',
+    token: '0',
+    disposition: 'enabled-only',
+  }),
   Object.freeze({ id: 'local-dams', token: 'q', disposition: 'enabled-only' }),
   Object.freeze({
     id: 'local-datacenters',
@@ -376,11 +416,6 @@ export const LAYER_STATE_REGISTRY = Object.freeze([
     token: 's',
     disposition: 'enabled+options',
     optionOwner: 'satellites',
-  }),
-  Object.freeze({
-    id: 'telegeography-submarine-cables',
-    token: 'u',
-    disposition: 'enabled-only',
   }),
   Object.freeze({ id: 'traffic', token: 't', disposition: 'enabled-only' }),
   Object.freeze({ id: 'transit', token: 'j', disposition: 'enabled-only' }),

@@ -1,4 +1,4 @@
-import { fetchRegionalText, fetchRegionalJson } from './http.js';
+import { fetchRegionalJson } from './http.js';
 import { normalizeRegionalArticles } from '../../../src/data/regionalModel.js';
 
 function decodeRssText(value) {
@@ -61,26 +61,7 @@ async function fetchRegionalNews(place) {
   const query = place?.locality || place?.region || place?.country;
   if (!query)
     return { status: 'unavailable', query: null, articles: [], source: null };
-  const rssParams = new URLSearchParams({
-    q: String(query).replace(/["\\]/g, ' ').trim(),
-    hl: 'en-US',
-    gl: 'US',
-    ceid: 'US:en',
-  });
-  try {
-    const xml = await fetchRegionalText(
-      `https://news.google.com/rss/search?${rssParams}`,
-      {
-        headers: { 'User-Agent': 'GodsEyeView/0.1' },
-        timeoutMs: 12_000,
-      },
-    );
-    const articles = normalizeRssArticles(xml, 5);
-    if (articles.length)
-      return { status: 'ready', query, articles, source: 'Google News RSS' };
-  } catch {
-    /* fall through to the existing free index */
-  }
+  // Google News RSS is parked (personal/noncommercial terms). GDELT only.
   const params = new URLSearchParams({
     query: `"${String(query).replace(/["\\]/g, ' ').trim()}"`,
     mode: 'artlist',

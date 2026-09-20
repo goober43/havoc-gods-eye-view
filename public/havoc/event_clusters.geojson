@@ -1,0 +1,38 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "cluster-ukraine",
+      "geometry": { "type": "Point", "coordinates": [30.5234, 50.4501] },
+      "properties": {
+        "id": "cluster-ukraine",
+        "title": "Kyiv event cluster",
+        "details": "Demo cluster centroid",
+        "count": 12
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cluster-taiwan",
+      "geometry": { "type": "Point", "coordinates": [121.5654, 25.033] },
+      "properties": {
+        "id": "cluster-taiwan",
+        "title": "Taipei event cluster",
+        "details": "Demo cluster centroid",
+        "count": 7
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cluster-sahel",
+      "geometry": { "type": "Point", "coordinates": [2.1098, 13.5116] },
+      "properties": {
+        "id": "cluster-sahel",
+        "title": "Niamey event cluster",
+        "details": "Demo cluster centroid",
+        "count": 5
+      }
+    }
+  ]
+}
