@@ -64,7 +64,7 @@ function bboxClauses(lane, box) {
 
 /**
  * PostgREST query for one HAVOC lane.
- * Point tables get lat/lon (or geo_lat/geo_lon) bbox sampling.
+ * Point tables get their mapped lat/lon columns (location_lat, geo_lat, or lat).
  * Place-only tables omit coordinate filters so unknown columns do not 400.
  */
 export function buildPostgrestSearchParams(table, searchParams) {

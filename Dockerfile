@@ -1,4 +1,4 @@
-# HAVOC God View — Vite preview (API proxies stay attached).
+# HAVOC God View — static dist + /api/havoc (no Vite host check).
 FROM node:24-bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -16,4 +16,4 @@ RUN npm run build
 ENV HOST=0.0.0.0
 ENV PORT=4173
 EXPOSE 4173
-CMD ["npm", "run", "preview"]
+CMD ["npm", "run", "start"]

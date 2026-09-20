@@ -10,19 +10,25 @@ npm ci
 npm run dev            # http://127.0.0.1:4173
 ```
 
-Hosted / preview (API proxies stay live):
+**Production / Cloudflare tunnel (required for acceptance):** Vite `dev`/`preview` enforce a Host allowlist and will show “Blocked request. This host is not allowed.” behind cloudflared. Do **not** paper over that with `preview.allowedHosts`. Build a static `dist` and serve it with the Node static host (no HMR, no Vite host check; `/api/havoc/*` and `/healthz` stay attached):
 
 ```bash
+npm ci
 npm run build
-npm run preview        # HOST=0.0.0.0 PORT=$PORT for Render/Docker
+HOST=0.0.0.0 PORT=4173 npm run start
+# then: cloudflared tunnel --url http://127.0.0.1:4173
 ```
+
+`npm run start` is `node server/standalone/static-serve.mjs`. It refuses to boot if `dist/index.html` is missing.
+
+Vite preview is local-only (`npm run preview`) and is not the tunnel path.
 
 Docker:
 
 ```bash
 docker build -t havoc-god-view .
 docker run -p 4173:4173 -e HOST=0.0.0.0 havoc-god-view
-# GET /healthz → ok
+# `npm run start` inside the image — GET /healthz → ok; no Vite host check
 ```
 
 Node `>=24.14 <25 || >=26 <27`. Cesium ion is optional. The globe boots on **keyless Esri World Imagery** with OSM as the automatic fallback.
