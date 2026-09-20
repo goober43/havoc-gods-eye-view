@@ -209,9 +209,14 @@ const LAYER_ALIASES = new Map([
   ['data centers', 'local-datacenters'],
   ['data centres', 'local-datacenters'],
   ['dams', 'local-dams'],
-  ['submarine cables', 'telegeography-submarine-cables'],
-  ['cables', 'telegeography-submarine-cables'],
-  ['telegeography', 'telegeography-submarine-cables'],
+  ['submarine cables', 'havoc-lane-events'],
+  ['cables', 'havoc-lane-events'],
+  ['havoc', 'havoc-intel'],
+  ['lane events', 'havoc-lane-events'],
+  ['aircraft history', 'havoc-aircraft-history'],
+  ['vessel history', 'havoc-vessel-history'],
+  ['whale movements', 'havoc-whale-movements'],
+  ['polymarket', 'havoc-polymarket-signals'],
   ['firms', 'local-firms'],
   ['fires', 'local-firms'],
   ['active fires', 'local-firms'],
@@ -4088,7 +4093,9 @@ function cleanText(value) {
 function layerTitle(layerId) {
   if (layerId === 'local-datacenters') return 'Datacenter';
   if (layerId === 'local-dams') return 'Dam';
-  if (layerId === 'telegeography-submarine-cables') return 'Submarine Cable';
+  if (layerId === 'havoc-lane-events') return 'HAVOC lane event';
+  if (layerId === 'havoc-intel') return 'HAVOC intel';
+  if (layerId === 'havoc-aircraft-history') return 'HAVOC aircraft';
   if (layerId === 'local-firms') return 'Active Fire';
   return layerId || 'Entity';
 }

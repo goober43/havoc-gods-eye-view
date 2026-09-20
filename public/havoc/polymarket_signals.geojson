@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "pm-dc",
+      "geometry": { "type": "Point", "coordinates": [-77.02, 38.89] },
+      "properties": {
+        "id": "pm-dc",
+        "title": "Polymarket — US policy",
+        "details": "Demo market geopin"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pm-taipei",
+      "geometry": { "type": "Point", "coordinates": [121.56, 25.03] },
+      "properties": {
+        "id": "pm-taipei",
+        "title": "Polymarket — Strait watch",
+        "details": "Demo market geopin"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pm-brussels",
+      "geometry": { "type": "Point", "coordinates": [4.35, 50.85] },
+      "properties": {
+        "id": "pm-brussels",
+        "title": "Polymarket — EU energy",
+        "details": "Demo market geopin"
+      }
+    }
+  ]
+}

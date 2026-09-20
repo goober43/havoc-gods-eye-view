@@ -32,11 +32,19 @@ const PANEL_GROUPS = [
   },
   {
     label: 'Infrastructure',
+    ids: ['military-installations', 'local-datacenters', 'local-dams'],
+  },
+  {
+    label: 'HAVOC',
     ids: [
-      'military-installations',
-      'local-datacenters',
-      'telegeography-submarine-cables',
-      'local-dams',
+      'havoc-lane-events',
+      'havoc-intel',
+      'havoc-event-clusters',
+      'havoc-vessel-history',
+      'havoc-aircraft-history',
+      'havoc-io-campaigns',
+      'havoc-whale-movements',
+      'havoc-polymarket-signals',
     ],
   },
   {
@@ -61,6 +69,14 @@ const PANEL_LABELS = {
   'alpr-cameras': 'Mapped ALPR Cameras',
   'local-datacenters': 'Data Centers',
   'local-firms': 'Active Fires',
+  'havoc-lane-events': 'HAVOC Lane Events',
+  'havoc-intel': 'HAVOC Intel',
+  'havoc-event-clusters': 'Event Clusters',
+  'havoc-vessel-history': 'Vessel History',
+  'havoc-aircraft-history': 'Aircraft History',
+  'havoc-io-campaigns': 'IO Campaigns',
+  'havoc-whale-movements': 'Whale Movements',
+  'havoc-polymarket-signals': 'Polymarket Signals',
 };
 
 function panelLabel(layer) {

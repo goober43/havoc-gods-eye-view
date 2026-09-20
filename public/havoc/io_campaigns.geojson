@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "io-baltics",
+      "geometry": { "type": "Point", "coordinates": [24.7536, 59.437] },
+      "properties": {
+        "id": "io-baltics",
+        "title": "Baltic IO campaign",
+        "details": "Demo influence-ops centroid"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "io-sahel",
+      "geometry": { "type": "Point", "coordinates": [-1.5197, 12.3714] },
+      "properties": {
+        "id": "io-sahel",
+        "title": "Sahel IO campaign",
+        "details": "Demo influence-ops centroid"
+      }
+    }
+  ]
+}

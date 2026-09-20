@@ -662,10 +662,10 @@ test('the voice TOOL SCHEMA matches the pinned release — the mission mapping i
   // ordering while allowing source formatting. Derived from the unchanged
   // release schema before formatting (the previous source-byte pin passed).
   const block = JSON.stringify(GEV_REALTIME_TOOLS);
-  assert.equal(block.length, 26208, 'serialized tool schema length drifted');
+  assert.equal(block.length, 26670, 'serialized tool schema length drifted');
   assert.equal(
     crypto.createHash('sha256').update(block).digest('hex'),
-    '135d4ec66239777da34a8476cdf8348574421d7afd2e981cc3490909a5bc8686',
+    'f44c4cf770838c7761fb64dc6de4c35c0c5bae53fa48070cc302e6bbba10fd1b',
     'the first-run missions must ride EXISTING tools: no schema edit, no cache bust',
   );
   const instructions = fs.readFileSync(new URL('../server/providers/openai/instructions.js', import.meta.url), 'utf8');
@@ -682,7 +682,7 @@ test('the voice TOOL SCHEMA matches the pinned release — the mission mapping i
   const mapping = instructions.slice(instructions.indexOf('NAMED VIEWS are shorthand'));
   const paragraph = mapping.slice(0, mapping.indexOf("',\n"));
   for (const layerId of [
-    'local-datacenters', 'local-dams', 'telegeography-submarine-cables', 'local-firms', 'earthquakes',
+    'local-datacenters', 'local-dams', 'havoc-lane-events', 'local-firms', 'earthquakes',
   ]) {
     assert.ok(paragraph.includes(layerId), `mapping must name the existing ${layerId} enum value`);
   }

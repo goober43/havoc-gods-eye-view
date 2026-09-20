@@ -2,33 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createBundledCableSource } from './bundledSource.js';
 
-test('a failed bundled response releases its body', async () => {
-  let released = 0;
-  const source = createBundledCableSource({
-    fetchImpl: async () => ({
-      ok: false,
-      status: 503,
-      body: {
-        cancel: async () => {
-          released++;
-        },
-      },
-    }),
-  });
-  await assert.rejects(source.fetch(), /HTTP 503/);
-  assert.equal(released, 2);
+test('TeleGeography bundled source is an empty HAVOC tombstone', async () => {
+  const source = createBundledCableSource();
+  const snapshot = await source.fetch();
+  assert.equal(snapshot.cables.features.length, 0);
+  assert.equal(snapshot.landingPoints.features.length, 0);
 });
 
-test('cancellation during JSON parsing cannot return a late snapshot', async () => {
+test('cancellation still aborts the empty cable source', async () => {
   const controller = new AbortController();
-  const source = createBundledCableSource({
-    fetchImpl: async () => ({
-      ok: true,
-      async json() {
-        controller.abort();
-        return { type: 'FeatureCollection', features: [] };
-      },
-    }),
-  });
+  controller.abort();
+  const source = createBundledCableSource();
   await assert.rejects(source.fetch(controller.signal), { name: 'AbortError' });
 });

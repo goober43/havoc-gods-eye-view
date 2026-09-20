@@ -38,6 +38,7 @@ export const KEY_SETUP_KEYS = Object.freeze([
     envVars: Object.freeze(['GOOGLE_MAPS_API_KEY']),
     tier: 'metered',
     clientExposed: true,
+    hidden: true,
   }),
   Object.freeze({
     id: 'google-maps-server',
@@ -64,6 +65,7 @@ export const KEY_SETUP_KEYS = Object.freeze([
     getUrl: 'https://aisstream.io',
     envVars: Object.freeze(['AISSTREAM_API_KEY']),
     tier: 'free',
+    hidden: true,
   }),
   Object.freeze({
     id: 'firms',
@@ -80,6 +82,7 @@ export const KEY_SETUP_KEYS = Object.freeze([
     getUrl: 'https://developer.tomtom.com',
     envVars: Object.freeze(['TOMTOM_API_KEY']),
     tier: 'free',
+    hidden: true,
   }),
   Object.freeze({
     id: 'cesium-ion',
@@ -97,6 +100,7 @@ export const KEY_SETUP_KEYS = Object.freeze([
     getUrl: 'https://opensky-network.org',
     envVars: Object.freeze(['OPENSKY_CLIENT_ID', 'OPENSKY_CLIENT_SECRET']),
     tier: 'free',
+    hidden: true,
   }),
   Object.freeze({
     id: 'launch-library',

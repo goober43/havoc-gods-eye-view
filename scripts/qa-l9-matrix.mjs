@@ -162,7 +162,7 @@ function keyGuard(name, state) {
  * unmapped layer must never pass silently just because nobody added it here.
  */
 const CREDIT_EXPECTATIONS = {
-  flights: /OpenSky/i,
+  flights: /HAVOC/i,
   military: /adsb\.lol/i,
   satellites: /CelesTrak/i,
   earthquakes: /Geological Survey|USGS/i,
@@ -176,7 +176,14 @@ const CREDIT_EXPECTATIONS = {
   'local-datacenters': /OpenStreetMap/i,
   'local-dams': /OpenStreetMap/i,
   'local-firms': /FIRMS/i,
-  'telegeography-submarine-cables': /TeleGeography/i,
+  'havoc-lane-events': /HAVOC/i,
+  'havoc-intel': /HAVOC/i,
+  'havoc-event-clusters': /HAVOC/i,
+  'havoc-vessel-history': /HAVOC/i,
+  'havoc-aircraft-history': /HAVOC/i,
+  'havoc-io-campaigns': /HAVOC/i,
+  'havoc-whale-movements': /HAVOC/i,
+  'havoc-polymarket-signals': /HAVOC/i,
   'local-neighborhoods': /DataSF|San Francisco/i,
   'weather-effects': /Open-Meteo/i,
 };

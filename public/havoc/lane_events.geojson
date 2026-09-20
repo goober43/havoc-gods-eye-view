@@ -1,0 +1,38 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "lane-strait-hormuz",
+      "geometry": { "type": "Point", "coordinates": [56.25, 26.57] },
+      "properties": {
+        "id": "lane-strait-hormuz",
+        "title": "Hormuz transit spike",
+        "details": "Demo lane event — energy corridor watch",
+        "severity": "elevated"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "lane-suez",
+      "geometry": { "type": "Point", "coordinates": [32.35, 30.45] },
+      "properties": {
+        "id": "lane-suez",
+        "title": "Suez convoy delay",
+        "details": "Demo lane event — canal queue",
+        "severity": "watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "lane-malacca",
+      "geometry": { "type": "Point", "coordinates": [103.5, 1.43] },
+      "properties": {
+        "id": "lane-malacca",
+        "title": "Malacca slow-steam",
+        "details": "Demo lane event — AIS density",
+        "severity": "info"
+      }
+    }
+  ]
+}

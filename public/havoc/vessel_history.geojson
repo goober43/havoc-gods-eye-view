@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "imo-9708851",
+      "geometry": { "type": "Point", "coordinates": [-5.0, 36.1] },
+      "properties": {
+        "id": "imo-9708851",
+        "mmsi": "636017893",
+        "title": "Demo tanker — Gibraltar",
+        "details": "Sample vessel_history row"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "imo-9412036",
+      "geometry": { "type": "Point", "coordinates": [54.0, 24.8] },
+      "properties": {
+        "id": "imo-9412036",
+        "mmsi": "477123400",
+        "title": "Demo boxship — Gulf",
+        "details": "Sample vessel_history row"
+      }
+    }
+  ]
+}

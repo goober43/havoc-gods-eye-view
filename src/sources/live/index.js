@@ -17,3 +17,4 @@ export {
   createAdsbLolSource,
   createAisStreamSource,
 } from './standalone.js';
+export { createHavocAircraftSource } from '../../havoc/aircraftSource.js';

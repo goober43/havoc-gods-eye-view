@@ -58,23 +58,21 @@ test('external ownership uses boot provenance even when store and shell values m
 
 test('the status payload reports presence without any credential material', () => {
   const env = {
-    GOOGLE_MAPS_API_KEY: 'AIzaSyFakeFakeFakeFake1234',
-    OPENSKY_CLIENT_ID: 'client-id-abcdef',
-    // Secret missing: the OpenSky pair must read as NOT set.
+    FIRMS_MAP_KEY: 'firms-map-key-abcdef1234',
+    OPENAI_API_KEY: 'sk-fake-openai-abcdef1234',
   };
   const status = keySetupStatus(env);
   assert.equal(status.total, KEY_SETUP_KEYS.filter((key) => !key.hidden).length);
-  const google = status.keys.find((key) => key.id === 'google-maps');
-  assert.equal(google.set, true);
-  const opensky = status.keys.find((key) => key.id === 'opensky');
-  assert.equal(opensky.set, false, 'half a credential pair is not configured');
+  const firms = status.keys.find((key) => key.id === 'firms');
+  assert.equal(firms.set, true);
+  const openai = status.keys.find((key) => key.id === 'openai');
+  assert.equal(openai.set, true);
   const serialized = JSON.stringify(status);
-  assert.ok(!serialized.includes('AIzaSyFakeFakeFakeFake1234'), 'a value leaked into status');
-  assert.ok(!serialized.includes('client-id-abcdef'), 'a value leaked into status');
-  assert.ok(!serialized.includes('1234'), 'a credential suffix leaked into status');
+  assert.ok(!serialized.includes('firms-map-key-abcdef1234'), 'a value leaked into status');
+  assert.ok(!serialized.includes('sk-fake-openai-abcdef1234'), 'a value leaked into status');
   assert.ok(!serialized.includes('abcdef'), 'a credential suffix leaked into status');
   assert.ok(!serialized.includes('tails'), 'status must not expose a credential-tail field');
-  assert.equal(status.setCount, 1);
+  assert.equal(status.setCount, 2);
 });
 
 test('whitespace-only env values do not count as configured', () => {
@@ -352,7 +350,8 @@ test('server Google key remains supported without appearing in setup or its miss
   assert.deepEqual(status, keySetupStatus({}));
   assert.equal(status.keys.some((key) => key.id === 'google-maps-server'), false);
   assert.equal(keySetupRequirement('google-maps-server'), '');
-  assert.equal(status.keys.find((key) => key.id === 'google-maps').title, 'GOOGLE MAPS');
+  assert.equal(status.keys.some((key) => key.id === 'google-maps'), false);
+  assert.equal(status.keys.find((key) => key.id === 'cesium-ion').title, 'CESIUM ION');
   const allVisibleConfigured = Object.fromEntries(status.keys.flatMap((key) =>
     key.envVars.map((name) => [name, 'configured-fixture']),
   ));

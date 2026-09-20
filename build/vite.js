@@ -29,6 +29,14 @@ export function createBrowserViteConfig({
         'Content-Security-Policy': "frame-ancestors 'none'",
       },
     },
+    preview: {
+      host: host || 'localhost',
+      port: parseInt(port, 10) || 4173,
+      allowedHosts:
+        host === '0.0.0.0' || host === '::'
+          ? true
+          : ['localhost', '127.0.0.1', '.local'],
+    },
     define: {
       'import.meta.env.GOOGLE_MAPS_API_KEY': JSON.stringify(googleApiKey),
       'import.meta.env.CESIUM_ION_TOKEN': JSON.stringify(cesiumToken),
