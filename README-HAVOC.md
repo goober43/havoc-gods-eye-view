@@ -44,7 +44,7 @@ Metered keys are **parked** (hidden from POWER UP, not required to install): Goo
 
 **Map-usable (PostgREST bbox/limit sample, 206 + `Prefer: count=exact`):**
 
-- `lane_events` → `havoc-lane-events` — `lat`/`lon`, `map_eligible=eq.true`
+- `lane_events` → `havoc-lane-events` — `location_lat`/`location_lon`, `map_eligible=eq.true`
 - `havoc_intel` → `havoc-intel` — `geo_lat`/`geo_lon` (+ `geom`)
 - `vessel_history` → `havoc-vessel-history` — `lat`/`lon`
 - `aircraft_history` → `havoc-aircraft-history` **and** the Flights layer (OpenSky replaced) — `lat`/`lon`

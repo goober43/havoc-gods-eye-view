@@ -83,7 +83,7 @@ test('live PostgREST 206 maps lane_events and havoc_intel columns', async (t) =>
     calls.push({ url: String(url), prefer: init.headers.Prefer });
     const href = String(url);
     const rows = href.includes('lane_events')
-      ? [{ id: 'e1', lat: 30.27, lon: -97.74, title: 'Austin', map_eligible: true }]
+      ? [{ id: 'e1', location_lat: 30.27, location_lon: -97.74, title: 'Austin', map_eligible: true }]
       : [{ id: 'i1', geo_lat: 38.9072, geo_lon: -77.0369, title: 'DC' }];
     return {
       ok: true,
@@ -100,6 +100,9 @@ test('live PostgREST 206 maps lane_events and havoc_intel columns', async (t) =>
   assert.equal(lanes.headers['x-havoc-upstream-status'], '206');
   assert.deepEqual(lanes.json().features[0].geometry.coordinates, [-97.74, 30.27]);
   assert.match(calls[0].url, /map_eligible=eq\.true/);
+  assert.match(decodeURIComponent(calls[0].url), /location_lat\.not\.is\.null/);
+  assert.match(decodeURIComponent(calls[0].url), /location_lon/);
+  assert.doesNotMatch(decodeURIComponent(calls[0].url), /(?<!location_)lat\./);
   assert.equal(calls[0].prefer, 'count=exact');
 
   const intel = await invoke(captureMiddleware(havocProxy()), {

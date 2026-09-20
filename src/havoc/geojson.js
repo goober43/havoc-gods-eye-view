@@ -29,20 +29,24 @@ export function readLonLat(row) {
     row.lng,
     row.longitude,
     row.long,
+    row.location_lon,
     row.geo_lon,
     row.x,
     row.properties?.lon,
     row.properties?.lng,
     row.properties?.longitude,
+    row.properties?.location_lon,
     row.properties?.geo_lon,
   );
   const lat = firstFinite(
     row.lat,
     row.latitude,
+    row.location_lat,
     row.geo_lat,
     row.y,
     row.properties?.lat,
     row.properties?.latitude,
+    row.properties?.location_lat,
     row.properties?.geo_lat,
   );
   if (coordinates(lat, lon)) return { lon, lat };

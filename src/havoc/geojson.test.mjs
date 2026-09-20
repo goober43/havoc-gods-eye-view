@@ -36,6 +36,23 @@ test('PostgREST rows and FeatureCollections normalize to GeoJSON', () => {
   assert.equal(fromFc.features[0].properties.title, 'Frankfurt');
 });
 
+test('lane_events location_lat/location_lon map to points', () => {
+  const fromCols = toFeatureCollection(
+    [
+      {
+        id: 'e1',
+        location_lat: 26.57,
+        location_lon: 56.25,
+        title: 'Hormuz',
+        map_eligible: true,
+      },
+    ],
+    'lane_events',
+  );
+  assert.equal(fromCols.features.length, 1);
+  assert.deepEqual(fromCols.features[0].geometry.coordinates, [56.25, 26.57]);
+});
+
 test('aircraft features map onto the live flight record contract', () => {
   const record = featureToAircraftRecord(
     rowToFeature(
@@ -92,8 +109,10 @@ test('PostgREST filters match the live column matrix', () => {
     new URLSearchParams('bbox=-99,29,-96,31&limit=50'),
   );
   assert.equal(lane.get('map_eligible'), 'eq.true');
-  assert.match(lane.get('and'), /lat\.gte\.29/);
-  assert.match(lane.get('and'), /lon\.lte\.-96/);
+  assert.match(lane.get('and'), /location_lat\.gte\.29/);
+  assert.match(lane.get('and'), /location_lon\.lte\.-96/);
+  assert.match(lane.get('and'), /location_lat\.not\.is\.null/);
+  assert.doesNotMatch(lane.get('and'), /(?<!location_)lat\./);
   const intel = buildPostgrestSearchParams(
     'havoc_intel',
     new URLSearchParams('bbox=-80,38,-76,40'),
