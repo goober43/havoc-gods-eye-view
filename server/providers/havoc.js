@@ -1,14 +1,13 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  DEFAULT_HAVOC_LIMIT,
-  HAVOC_LANE_BY_TABLE,
-  MAX_HAVOC_LIMIT,
-  isBlockedHavocHost,
-  isHavocLane,
-} from '../../src/havoc/lanes.js';
+import { HAVOC_LANE_BY_TABLE, isBlockedHavocHost, isHavocLane } from '../../src/havoc/lanes.js';
 import { toFeatureCollection } from '../../src/havoc/geojson.js';
+import {
+  havocLaneRestUrl,
+  parseHavocBbox,
+  resolveHavocLimit,
+} from '../../src/havoc/postgrest.js';
 
 const STUB_ROOT = fileURLToPath(new URL('../../public/havoc/', import.meta.url));
 
@@ -21,28 +20,6 @@ function json(res, status, body, headers = {}) {
     res.setHeader(key, value);
   }
   res.end(payload);
-}
-
-function parseBbox(url) {
-  const bbox = String(url.searchParams.get('bbox') || '').trim();
-  if (bbox) {
-    const parts = bbox.split(',').map(Number);
-    if (parts.length === 4 && parts.every(Number.isFinite)) {
-      return { west: parts[0], south: parts[1], east: parts[2], north: parts[3] };
-    }
-  }
-  const lat = Number(url.searchParams.get('lat'));
-  const lon = Number(url.searchParams.get('lon'));
-  if (Number.isFinite(lat) && Number.isFinite(lon)) {
-    const pad = 8;
-    return {
-      west: lon - pad,
-      south: lat - pad,
-      east: lon + pad,
-      north: lat + pad,
-    };
-  }
-  return null;
 }
 
 function inBbox(feature, box) {
@@ -61,18 +38,11 @@ function inBbox(feature, box) {
 }
 
 function sample(collection, url) {
-  const box = parseBbox(url);
-  const rawLimit = Number(url.searchParams.get('limit'));
-  const limit = Math.min(
-    MAX_HAVOC_LIMIT,
-    Math.max(
-      1,
-      Number.isFinite(rawLimit) && rawLimit > 0
-        ? Math.trunc(rawLimit)
-        : DEFAULT_HAVOC_LIMIT,
-    ),
-  );
-  const id = String(url.searchParams.get('id') || '').trim().toLowerCase();
+  const box = parseHavocBbox(url.searchParams);
+  const limit = resolveHavocLimit(url.searchParams);
+  const id = String(url.searchParams.get('id') || '')
+    .trim()
+    .toLowerCase();
   let features = collection.features.filter((feature) => inBbox(feature, box));
   if (id) {
     features = features.filter((feature) => {
@@ -93,42 +63,28 @@ async function readStub(table) {
   return toFeatureCollection(JSON.parse(text), table);
 }
 
+/** Service role required for vessel_history / aircraft_history / event_clusters (anon RLS empty). */
 function havocConfigured() {
-  const url = String(process.env.HAVOC_SUPABASE_URL || '').trim();
-  const key = String(process.env.HAVOC_SUPABASE_KEY || '').trim();
+  const url = String(
+    process.env.HAVOC_SUPABASE_URL || process.env.SUPABASE_URL || '',
+  ).trim();
+  const key = String(
+    process.env.HAVOC_SUPABASE_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      '',
+  ).trim();
   if (!url || !key) return null;
   if (isBlockedHavocHost(url)) {
     throw new Error('HAVOC_SUPABASE_URL host is blocked by commercial_ok policy');
   }
-  return { url: url.replace(/\/+$/, ''), key };
-}
-
-function postgrestFilter(table, url) {
-  const params = new URLSearchParams();
-  params.set('limit', String(Math.min(MAX_HAVOC_LIMIT, DEFAULT_HAVOC_LIMIT)));
-  const limit = Number(url.searchParams.get('limit'));
-  if (Number.isFinite(limit) && limit > 0) {
-    params.set('limit', String(Math.min(MAX_HAVOC_LIMIT, Math.trunc(limit))));
-  }
-  const box = parseBbox(url);
-  if (box) {
-    // Prefer numeric lat/lon columns when present; PostgREST ignores unknown filters.
-    params.set('lat', `gte.${box.south}`);
-    params.append('lat', `lte.${box.north}`);
-    params.set('lon', `gte.${box.west}`);
-    params.append('lon', `lte.${box.east}`);
-  }
-  const id = String(url.searchParams.get('id') || '').trim();
-  if (id) params.set('or', `(id.eq.${id},icao24.eq.${id},mmsi.eq.${id})`);
-  return params;
+  return { url, key };
 }
 
 async function fetchLive(table, requestUrl) {
   const creds = havocConfigured();
   if (!creds) return null;
-  const params = postgrestFilter(table, requestUrl);
   const upstream = await fetch(
-    `${creds.url}/rest/v1/${encodeURIComponent(table)}?${params}`,
+    havocLaneRestUrl(creds.url, table, requestUrl.searchParams),
     {
       headers: {
         apikey: creds.key,
@@ -138,13 +94,18 @@ async function fetchLive(table, requestUrl) {
       },
     },
   );
+  // PostgREST returns 206 when Prefer: count=exact and the page is a sample.
   if (!upstream.ok) {
     const error = new Error(`PostgREST HTTP ${upstream.status}`);
     error.status = upstream.status;
     throw error;
   }
   const payload = await upstream.json();
-  return toFeatureCollection(payload, table);
+  return {
+    collection: toFeatureCollection(payload, table),
+    status: upstream.status,
+    contentRange: upstream.headers.get('content-range') || '',
+  };
 }
 
 function attachHavocRoutes(server) {
@@ -168,19 +129,33 @@ function attachHavocRoutes(server) {
     try {
       let collection = null;
       let source = 'stub';
+      let upstreamStatus = '';
+      let contentRange = '';
       try {
-        collection = await fetchLive(table, url);
-        if (collection) source = 'postgrest';
+        const live = await fetchLive(table, url);
+        if (live) {
+          collection = live.collection;
+          source = 'postgrest';
+          upstreamStatus = String(live.status);
+          contentRange = live.contentRange;
+        }
       } catch (error) {
         console.warn(`[havoc] ${table} live fetch failed: ${error.message}`);
       }
       if (!collection) collection = await readStub(table);
       const sampled = sample(collection, url);
+      const lane = HAVOC_LANE_BY_TABLE[table];
       return json(res, 200, sampled, {
         'x-havoc-source': source,
-        'x-havoc-coverage': 'bbox/limit sample',
+        'x-havoc-coverage':
+          lane.geo === 'none'
+            ? 'no-point-geometry'
+            : 'bbox/limit sample',
         'x-havoc-lane': table,
-        'x-havoc-layer': HAVOC_LANE_BY_TABLE[table].layerId,
+        'x-havoc-layer': lane.layerId,
+        'x-havoc-geo': lane.geo,
+        ...(upstreamStatus ? { 'x-havoc-upstream-status': upstreamStatus } : {}),
+        ...(contentRange ? { 'content-range': contentRange } : {}),
       });
     } catch (error) {
       return json(res, 500, { error: error.message || 'HAVOC lane failed' });

@@ -120,8 +120,9 @@ export function createHavocLaneLayer({
       const request = new AbortController();
       _request = request;
       try {
+        const box = cameraViewBox(_viewer, Cesium);
         const snapshot = await feed.getSnapshot(
-          { limit: 2000 },
+          { limit: 2000, ...(box || {}) },
           { signal: request.signal },
         );
         if (request.signal.aborted || _request !== request || !_enabled) {

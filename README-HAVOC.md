@@ -31,27 +31,32 @@ Node `>=24.14 <25 || >=26 <27`. Cesium ion is optional. The globe boots on **key
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `HAVOC_SUPABASE_URL` | no | PostgREST/Supabase origin. Unset → sample GeoJSON stubs in `public/havoc/`. |
-| `HAVOC_SUPABASE_KEY` | no | `apikey` / Bearer for PostgREST. |
+| `HAVOC_SUPABASE_URL` | no | Supabase origin (`SUPABASE_URL`). Unset → `public/havoc/*.geojson` stubs. |
+| `HAVOC_SUPABASE_KEY` | no | Service role (`SUPABASE_SERVICE_ROLE_KEY`). Anon RLS is empty on `vessel_history`, `aircraft_history`, `event_clusters`. |
 | `CESIUM_ION_TOKEN` | no | Bing stacks + world terrain only. |
 | `HOST` / `PORT` | no | Bind address. `0.0.0.0` for hosted preview. |
+
+The proxy also reads `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` if the `HAVOC_*` names are unset. It never uses the anon key. Do not commit secrets.
 
 Metered keys are **parked** (hidden from POWER UP, not required to install): Google Maps, TomTom, AISStream/MarineTraffic-class live ships, OpenSky. Do not add Google Maps / TomTom / MarineTraffic / AP keys.
 
 ## Layers
 
-**Live (adapter + stub, no secrets):**
+**Map-usable (PostgREST bbox/limit sample, 206 + `Prefer: count=exact`):**
 
-- `lane_events` → `havoc-lane-events`
-- `havoc_intel` → `havoc-intel`
-- `event_clusters` → `havoc-event-clusters`
-- `vessel_history` → `havoc-vessel-history`
-- `aircraft_history` → `havoc-aircraft-history` **and** the Flights layer (OpenSky replaced)
-- `io_campaigns` → `havoc-io-campaigns`
-- `whale_movements` → `havoc-whale-movements`
-- `polymarket_signals` → `havoc-polymarket-signals`
+- `lane_events` → `havoc-lane-events` — `lat`/`lon`, `map_eligible=eq.true`
+- `havoc_intel` → `havoc-intel` — `geo_lat`/`geo_lon` (+ `geom`)
+- `vessel_history` → `havoc-vessel-history` — `lat`/`lon`
+- `aircraft_history` → `havoc-aircraft-history` **and** the Flights layer (OpenSky replaced) — `lat`/`lon`
 
-Each `GET /api/havoc/<table>?bbox=west,south,east,north&limit=2000` prefers PostgREST when both env vars are set, otherwise serves `public/havoc/<table>.geojson`. Toggle the **HAVOC** group in Data Layers.
+**Limited geo (layer stays registered; live points empty / optional):**
+
+- `event_clusters` — place string only
+- `io_campaigns` — regions text
+- `whale_movements` — geo mostly null; map rows that have coords
+- `polymarket_signals` — no coords
+
+Each `GET /api/havoc/<table>?bbox=west,south,east,north&limit=2000` hits `{SUPABASE_URL}/rest/v1/<table>` when env is set (206 + `Prefer: count=exact` is success), otherwise serves bundled stubs so a keyless install still boots. Toggle the **HAVOC** group in Data Layers. Acceptance priority: aircraft_history + lane_events + vessel_history + havoc_intel on keyless Esri.
 
 **Removed / parked:**
 

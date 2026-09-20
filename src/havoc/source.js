@@ -3,7 +3,7 @@ import {
   LiveSourceError,
   readResponse,
 } from '../sources/live/contract.js';
-import { DEFAULT_HAVOC_LIMIT, isHavocLane } from './lanes.js';
+import { DEFAULT_HAVOC_LIMIT, HAVOC_LANE_IDS, isHavocLane } from './lanes.js';
 import { emptyFeatureCollection, toFeatureCollection } from './geojson.js';
 
 const defaultFetch = (...args) => globalThis.fetch(...args);
@@ -79,16 +79,7 @@ export function createHavocLaneSource(
 
 export function createHavocLaneSources(options) {
   return Object.fromEntries(
-    [
-      'lane_events',
-      'havoc_intel',
-      'event_clusters',
-      'vessel_history',
-      'aircraft_history',
-      'io_campaigns',
-      'whale_movements',
-      'polymarket_signals',
-    ].map((table) => [table, createHavocLaneSource(table, options)]),
+    HAVOC_LANE_IDS.map((table) => [table, createHavocLaneSource(table, options)]),
   );
 }
 

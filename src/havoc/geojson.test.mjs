@@ -6,6 +6,12 @@ import {
   toFeatureCollection,
 } from './geojson.js';
 import { isBlockedHavocHost, isHavocLane } from './lanes.js';
+import {
+  buildPostgrestSearchParams,
+  havocLaneRestUrl,
+  normalizeHavocRestUrl,
+  parseHavocBbox,
+} from './postgrest.js';
 
 test('PostgREST rows and FeatureCollections normalize to GeoJSON', () => {
   const fromRows = toFeatureCollection(
@@ -49,6 +55,72 @@ test('aircraft features map onto the live flight record contract', () => {
   assert.equal(record.callsign, 'DAL123');
   assert.equal(record.latitude, 30.3);
   assert.equal(record.baroAltitudeM, 10668);
+});
+
+test('havoc_intel geo_lat/geo_lon and geom map to points', () => {
+  const fromCols = toFeatureCollection(
+    [{ id: 'i1', geo_lat: 38.9072, geo_lon: -77.0369, title: 'DC' }],
+    'havoc_intel',
+  );
+  assert.deepEqual(fromCols.features[0].geometry.coordinates, [-77.0369, 38.9072]);
+  const fromGeom = toFeatureCollection(
+    [{ id: 'i2', geom: { type: 'Point', coordinates: [8.68, 50.11] } }],
+    'havoc_intel',
+  );
+  assert.deepEqual(fromGeom.features[0].geometry.coordinates, [8.68, 50.11]);
+});
+
+test('place-only rows become an empty FeatureCollection', () => {
+  const empty = toFeatureCollection(
+    [{ id: 'c1', place: 'Austin, TX' }, { id: 'c2', regions: 'EU' }],
+    'event_clusters',
+  );
+  assert.equal(empty.features.length, 0);
+});
+
+test('PostgREST filters match the live column matrix', () => {
+  assert.equal(
+    normalizeHavocRestUrl('https://example.supabase.co/'),
+    'https://example.supabase.co/rest/v1',
+  );
+  assert.equal(
+    normalizeHavocRestUrl('https://example.supabase.co/rest/v1'),
+    'https://example.supabase.co/rest/v1',
+  );
+  const lane = buildPostgrestSearchParams(
+    'lane_events',
+    new URLSearchParams('bbox=-99,29,-96,31&limit=50'),
+  );
+  assert.equal(lane.get('map_eligible'), 'eq.true');
+  assert.match(lane.get('and'), /lat\.gte\.29/);
+  assert.match(lane.get('and'), /lon\.lte\.-96/);
+  const intel = buildPostgrestSearchParams(
+    'havoc_intel',
+    new URLSearchParams('bbox=-80,38,-76,40'),
+  );
+  assert.match(intel.get('and'), /geo_lat\.gte\.38/);
+  assert.match(intel.get('and'), /geo_lon\.lte\.-76/);
+  assert.equal(intel.get('lat'), null);
+  const clusters = buildPostgrestSearchParams(
+    'event_clusters',
+    new URLSearchParams('bbox=-99,29,-96,31&limit=10'),
+  );
+  assert.equal(clusters.get('and'), null);
+  assert.equal(clusters.get('lat'), null);
+  assert.equal(clusters.get('limit'), '10');
+  const url = havocLaneRestUrl(
+    'https://example.supabase.co',
+    'aircraft_history',
+    new URLSearchParams('lat=30&lon=-97&limit=25'),
+  );
+  assert.match(url, /\/rest\/v1\/aircraft_history\?/);
+  assert.match(url, /lat\.not\.is\.null/);
+  const unbounded = buildPostgrestSearchParams(
+    'aircraft_history',
+    new URLSearchParams('limit=20'),
+  );
+  assert.equal(unbounded.get('and'), '(lat.not.is.null,lon.not.is.null)');
+  assert.equal(parseHavocBbox(new URLSearchParams('limit=20')), null);
 });
 
 test('commercial_ok=false hosts stay out of HAVOC adapters', () => {
